@@ -106,7 +106,7 @@ docker volume prune
 
 ### Upload Dump
 
-1. Ask [@rick](https://github.com/ecsricktorzynski) to provide you access to the
+1. Ask the team to provide you the
     latest neo4j dump file, typically hosted in our shared Teams Folder.
 2. Save the dump file in `./neo4j/import`
 3. Run below commands:

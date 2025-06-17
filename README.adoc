@@ -1,0 +1,129 @@
+# Digital Twin
+
+## Neo4j Dump File Tracking
+
+Neo4j dump files stored in `neo4j/import` are tracked using [git lfs](https://git-lfs.com/).
+To version control the dump file, you must install git-lfs for your system and initialize
+it for your current user. [Install instructions are found here](https://github.com/git-lfs/git-lfs?tab=readme-ov-file#installing):
+
+## Pre-requisites
+- Install Docker Desktop version >= 4.27 ([Official Page](https://www.docker.com/products/docker-desktop/))
+
+Install git lfs:
+
+- [For Mac using brew](https://formulae.brew.sh/formula/git-lfs#default)
+- [For Debian/Ubuntu using apt](https://github.com/git-lfs/git-lfs/blob/main/INSTALLING.md)
+
+Initialize git lfs:
+
+```sh
+git lfs install
+```
+
+```
+We are using git large file storage, so the database is part of the repository.
+Getting the latest version of the database:
+```sh
+git lfs fetch
+git lfs checkout
+```
+You must also import the database
+```sh
+cd neo4j
+python3 import.py
+```
+If you go to the Neo4j interface, you should see Deployment and Environment Node types, which will track URLs for s3url and mockshop site.
+## Starting Services
+
+The frontend vueapp is ran directly by the developer using `npm run dev`. See
+[vueApp README.md](vueApp/app/README.md) for more information. However, there
+is a fixed deployment option that does not require node.js to be installed.
+
+> [!IMPORTANT]
+> - all docker compose scripts must be executed from the root of the graph project
+> - precomputed `DOCKER_UID` and `DOCKER_GID` values may be saved to a .env file and omitted
+
+### Fixed Deployment
+
+Start all services:
+
+```sh
+docker compose -f compose.yaml up -d
+```
+
+Shut down all services:
+
+```sh
+docker compose -f compose.yaml down
+```
+
+### Development Deployment
+
+Start all services:
+
+```sh
+docker compose -f compose.yaml up -d
+```
+
+Shut down all services:
+
+```sh
+docker compose down
+```
+
+### Cleanup Docker Resources
+
+You may clean up docker resources that are no longer used automatically using
+the cli.
+
+> [!NOTE]
+> You will be prompted by each command to confirm the action
+
+To clean docker images:
+
+```sh
+docker image prune
+```
+
+To clean docker volumes:
+
+```sh
+docker volume prune
+```
+
+## Access to Resources
+
+| Service       | URI                                     |
+| :--           | ---                                     |
+| Neo4j Proxy   | [localhost:8080](http://localhost:8080) |
+| Neo4j Backend | [localhost:7474](http://localhost:7474) |
+
+## Neo4j Development Data
+
+> [!WARNING]
+> - you must have started services at least once using the above methods
+> - both commands require the working directory to be `./neo4j`
+
+### Upload Dump
+
+1. Ask [@rick](https://github.com/ecsricktorzynski) to provide you access to the
+    latest neo4j dump file, typically hosted in our shared Teams Folder.
+2. Save the dump file in `./neo4j/import`
+3. Run below commands:
+
+```sh
+python import.py
+```
+
+### Export Dump
+
+The export script will dump the existing database of the compose instance to
+the `./neo4j/export` directory. To the commands:
+
+```sh
+python export.py
+```
+
+== Proposed Architecture
+
+TODO

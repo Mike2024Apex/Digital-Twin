@@ -1,0 +1,45 @@
+name: digital-twin
+
+services:
+  neo4j:
+    build:
+      context: .
+      dockerfile: ./neo4j/Dockerfile
+    networks:
+      - neo4j
+    volumes:
+      - neo4j:/data
+    environment:
+      NEO4J_AUTH: none
+    ports:
+      - 7474:7474
+      - 7687:7687
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider localhost:7474 || exit 1"]
+
+  backend:
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    init: true
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    volumes:
+      - ./backend/app:/app
+    networks:
+      - neo4j
+      - backend
+    environment:
+      RUNTIME: dev
+      PRODUCTION: false
+    ports:
+      - 8501:8501
+
+networks:
+  neo4j:
+  backend:
+
+volumes:
+  neo4j:
+
